@@ -24,9 +24,15 @@ object Huffman {
   
 
   // Part 1: Basics
-    def weight(tree: CodeTree): Int = ??? // tree match ...
+    def weight(tree: CodeTree): Int = tree match {
+      case Leaf(c, w) => w
+      case Fork(l, r, c, w) => weight(l) + weight(r)
+    }
   
-    def chars(tree: CodeTree): List[Char] = ??? // tree match ...
+    def chars(tree: CodeTree): List[Char] = tree match {
+      case Leaf(c, w) => List(c)
+      case Fork(l, r, c, w) => chars(l) ::: chars(r)
+    }
   
   def makeCodeTree(left: CodeTree, right: CodeTree) =
     Fork(left, right, chars(left) ::: chars(right), weight(left) + weight(right))
@@ -69,7 +75,16 @@ object Huffman {
    *       println("integer is  : "+ theInt)
    *   }
    */
-    def times(chars: List[Char]): List[(Char, Int)] = ???
+    def times(chars: List[Char]): List[(Char, Int)] = chars match {
+      case List() => List()
+      case List(c) => List((c, 1))
+      case c :: cs => insert(c, times(cs))
+    }
+
+    def insert(c: Char, ts: List[(Char, Int)]): List[(Char, Int)] = ts match {
+      case List() => List((c, 1))
+      case x :: xs => if(x._1 == c) (c, x._2 + 1) :: xs else x :: insert(c, xs)
+    }
   
   /**
    * Returns a list of `Leaf` nodes for a given frequency table `freqs`.
@@ -83,7 +98,12 @@ object Huffman {
   /**
    * Checks whether the list `trees` contains only one single code tree.
    */
-    def singleton(trees: List[CodeTree]): Boolean = ???
+    def singleton(trees: List[CodeTree]): Boolean = trees match {
+      case List() => false
+      case List(x) => true
+      case x :: xs => false
+    }
+
   
   /**
    * The parameter `trees` of this function is a list of code trees ordered
@@ -146,7 +166,7 @@ object Huffman {
 
   /**
    * What does the secret message say? Can you decode it?
-   * For the decoding use the `frenchCode' Huffman tree defined above.
+   * For the decoding use the 'frenchCode' Huffman tree defined above.
    */
   val secret: List[Bit] = List(0,0,1,1,1,0,1,0,1,1,1,0,0,1,1,0,1,0,0,1,1,0,1,0,1,1,0,0,1,1,1,1,1,0,1,0,1,1,0,0,0,0,1,0,1,1,1,0,0,1,0,0,1,0,0,0,1,0,0,0,1,0,1)
 
