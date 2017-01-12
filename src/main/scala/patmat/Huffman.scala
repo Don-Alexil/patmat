@@ -155,7 +155,6 @@ object Huffman {
   
 
   // Part 3: Decoding
-
   type Bit = Int
 
   /**
@@ -163,8 +162,7 @@ object Huffman {
    * the resulting list of characters.
    */
     def decode(tree: CodeTree, bits: List[Bit]): List[Char] = {
-      def decodeRec(root: CodeTree, remaining: List[Bit], acc: List[Char]) : List[Char] = {
-        bits match {
+      def decodeRec(root: CodeTree, remaining: List[Bit], acc: List[Char]) : List[Char] = remaining match {
           case Nil => root match {
             case Leaf(c,_) => acc :+ c
             case Fork(_,_,_,_) => throw new Error("Invalid Bit Array")
@@ -174,7 +172,6 @@ object Huffman {
             case Fork(left,right,_,_) => decodeRec(if (b == 0) left else right, bs, acc)
           }
         }
-      }
 
       decodeRec(tree, bits, List())
     }
@@ -269,6 +266,6 @@ object Huffman {
    * and then uses it to perform the actual encoding.
    */
     def quickEncode(tree: CodeTree)(text: List[Char]): List[Bit] = {
-      
+      text flatMap codeBits(convert(tree))
     }
   }
